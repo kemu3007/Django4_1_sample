@@ -20,9 +20,9 @@ class AsyncView(View):
 
 def bulk_create(process: str, model, instances):
     start = time.time()
-    print(f"sync start_agg {process}")
+    print(f"sync start_create {process}")
     model.objects.bulk_create(instances)
-    print(f"sync   end_agg {process} {time.time() - start}")
+    print(f"sync   end_create {process} {time.time() - start}")
 
 
 class SyncGetView(View):
@@ -38,15 +38,15 @@ class SyncGetView(View):
 
 async def abulk_create(process: str, model, instances):
     start = time.time()
-    print(f"async start_agg {process}")
+    print(f"async start_create {process}")
     await model.objects.abulk_create(instances)
-    print(f"async   end_agg {process} {time.time() - start}")
+    print(f"async   end_create {process} {time.time() - start}")
 
 
 class AsyncGetView(View):
     async def get(self, request, *args, **kwargs):
-        users = baker.prepare(User, _quantity=1000)
-        sessions = baker.prepare(Session, _quantity=1000)
+        users = baker.prepare(User, _quantity=3000)
+        sessions = baker.prepare(Session, _quantity=3000)
         start = time.time()
         await asyncio.gather(abulk_create("user", User, users), abulk_create("session", Session, sessions))
         end = time.time()
